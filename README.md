@@ -1,12 +1,12 @@
 This tool is highly inspired from Brendan Greg's `msr-cloud-tools` (https://github.com/brendangregg/msr-cloud-tools).
 
 # Usage
-Monitor the frequency of `cpu` each `interval` second (default: 0.1s) and store it in `freq.log`:
+Monitor the frequency of `cpu` each `interval` second (optionnal, defaults to 0.1s) and store results in `output_dir`, with some metadata:
 ```
-   ./log_freq.sh cpu interval > freq.log
+   ./log_freq.sh cpu output_dir [interval]
 ```
 
-Plot the frequency over time (`output` should be a `.pdf`):
+Plot the frequency over time (`output` should be a `.pdf`, `input_dir` is the `output_dir` from the previous command):
 ```
-   ./plot.py input output
+   ./plot.py input_dir output
 ```

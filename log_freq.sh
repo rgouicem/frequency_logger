@@ -1,11 +1,14 @@
 #! /bin/bash
 
-if [ $# -ne 1 ] && [ $# -ne 2 ] ; then
-    echo "Usage: log_freq.sh cpu [interval]"
+if [ $# -ne 2 ] && [ $# -ne 3 ] ; then
+    echo "Usage: log_freq.sh cpu output_dir [interval]"
     exit 255
 fi
 
 [ $EUID -ne 0 ] && { echo "Run this with more privileges (root or sudo)"; exit 254; }
+
+[ -d $2 ] && { echo "$output_dir already exists. Aborting."; exit 252; }
+output_dir=$2
 
 lsmod | grep -q -E '^msr ' || modprobe msr || { echo "You need the msr kernel module for this tool to work"; exit 253; }
 
@@ -14,7 +17,7 @@ IA32_MPERF=0xe7
 IA32_APERF=0xe8
 
 interval=0.1
-[ -z $2 ] || interval=$2
+[ -z $3 ] || interval=$3
 
 # Usage: readfreq cpu
 function readfreq {
@@ -35,13 +38,19 @@ function readfreq {
     echo "$d;$freq"
 }
 
+mkdir -p $output_dir
+
 # Get base freq
 base_khz=$(cat /sys/devices/system/cpu/cpufreq/policy0/base_frequency)
+echo $base_khz > ${output_dir}/base_freq
+cat /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq > ${output_dir}/min_freq
+cat /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq > ${output_dir}/max_freq
+cp /sys/devices/system/cpu/cpufreq/policy0/scaling_governor ${output_dir}/
 
 lm=0
 la=0
-echo "time;frequency"
+echo "time;frequency" > ${output_dir}/log
 while : ; do
     readfreq $1
     sleep $interval
-done
+done >> ${output_dir}/log
