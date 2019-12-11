@@ -9,7 +9,7 @@
 
 [ $# -lt 1 ] && cpulist="0-$(nproc)" || cpulist=$1
 
-taskset -c -p ${cpulist} $$
+taskset -c -p ${cpulist} $$ &> /dev/null
 
 while : ; do
     :
