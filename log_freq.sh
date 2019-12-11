@@ -2,6 +2,7 @@
 
 [ $# -ne 1 ] && { echo "Usage: log_freq.sh cpu"; exit 255; }
 [ $EUID -ne 0 ] && { echo "Run this with more privileges (root or sudo)"; exit 254; }
+lsmod | grep -q -E '^msr ' || modprobe msr || { echo "You need the msr kernel module for this tool to work"; exit 253; }
 
 # Usage: readfreq cpu
 function readfreq {
