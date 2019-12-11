@@ -1,4 +1,4 @@
-This tool is highly inspired from Brendann Greg's `msr-cloud-tools` (https://github.com/brendangregg/msr-cloud-tools).
+This tool is highly inspired from Brendan Greg's `msr-cloud-tools` (https://github.com/brendangregg/msr-cloud-tools).
 
 # Usage
 Monitor the frequency of `cpu` and store it in `freq.log`:
@@ -8,5 +8,5 @@ Monitor the frequency of `cpu` and store it in `freq.log`:
 
 Plot the frequency over time (generates `freq.pdf` file):
 ```
-	./plot.py freq.log freq.pdf
+   ./plot.py freq.log freq.pdf
 ```
