@@ -10,3 +10,5 @@ Plot the frequency over time (`output` should be a `.pdf`, `input_dir` is the `o
 ```
    ./plot.py input_dir output
 ```
+
+You can see the `test_apps/test_loop.sh` script for an exemple of how to use this tool.
