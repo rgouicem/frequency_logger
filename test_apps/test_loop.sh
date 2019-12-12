@@ -8,10 +8,12 @@ logger=$!
 sleep 0.5
 
 test_apps/loop.sh 1 &
+echo "$(date +%s%N);start loop;green" >> traces/events
 looper=$!
 
 sleep 0.5
 kill -9 $looper
+echo "$(date +%s%N);kill loop;red" >> traces/events
 
 sleep 0.5
 kill -9 $logger
