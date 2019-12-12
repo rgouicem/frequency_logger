@@ -2,6 +2,8 @@
 
 [ $EUID -ne 0 ] && { echo "Must be root."; exit 1; }
 
+taskset -cp 0 $$ &> /dev/null
+
 taskset -c 0 ./log_freq.sh 1 traces 0.001 &
 logger=$!
 
