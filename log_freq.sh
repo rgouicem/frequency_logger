@@ -42,6 +42,7 @@ mkdir -p $output_dir
 
 # Get base freq
 base_khz=$(echo "$(sed -nE '/model name/s/(.+) ([0-9.]+)GHz/\2/p' /proc/cpuinfo | head -n1) * 1000" | bc)
+base_khz=${base_khz%.*}
 echo $base_khz > ${output_dir}/base_freq
 cp /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq ${output_dir}/min_freq
 cp /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq ${output_dir}/max_freq
