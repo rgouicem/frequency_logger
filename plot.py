@@ -8,8 +8,11 @@ import sys
 _, input_dir, output_file = sys.argv
 
 # Read min, max and base freq
-with open(input_dir+'/base_freq', 'r') as fp:
-    base_freq = int(fp.readlines()[0])
+try:
+    with open(input_dir+'/base_freq', 'r') as fp:
+        base_freq = int(fp.readlines()[0])
+except:
+    pass
 with open(input_dir+'/max_freq', 'r') as fp:
     max_freq = int(fp.readlines()[0])
 with open(input_dir+'/min_freq', 'r') as fp:
@@ -29,7 +32,10 @@ end_time = df['time'].values[-1]
 
 # Plot
 plt.plot("time", "frequency", data=df, marker='+')
-plt.hlines(base_freq / 1000, 0, end_time, label='base', colors=['green'], linestyles='dashed')
+try:
+    plt.hlines(base_freq / 1000, 0, end_time, label='base', colors=['green'], linestyles='dashed')
+except:
+    pass
 plt.hlines(min_freq / 1000, 0, end_time, label='min', colors=['black'], linestyles='dashed')
 plt.hlines(max_freq / 1000, 0, end_time, label='max', colors=['red'], linestyles='dashed')
 

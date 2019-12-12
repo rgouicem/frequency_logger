@@ -42,9 +42,9 @@ mkdir -p $output_dir
 
 # Get base freq
 base_khz=$(cat /sys/devices/system/cpu/cpufreq/policy0/base_frequency)
-echo $base_khz > ${output_dir}/base_freq
-cat /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq > ${output_dir}/min_freq
-cat /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq > ${output_dir}/max_freq
+cp /sys/devices/system/cpu/cpufreq/policy0/base_frequency ${output_dir}/base_freq
+cp /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq ${output_dir}/min_freq
+cp /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq ${output_dir}/max_freq
 cp /sys/devices/system/cpu/cpufreq/policy0/scaling_governor ${output_dir}/
 
 lm=0
