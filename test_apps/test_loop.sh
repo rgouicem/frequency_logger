@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Return a nanosecond clock compatible with CLOCK_MONOTONIC_RAW from clock_gettime()
+function now() {
+    sed -nE '/now/s/^now at ([0-9]+).*/\1/p' /proc/timer_list
+}
+
 [ $EUID -ne 0 ] && { echo "Must be root."; exit 1; }
 
 taskset -cp 0 $$ &> /dev/null
@@ -7,16 +12,16 @@ taskset -cp 0 $$ &> /dev/null
 taskset -c 0 ./log_freq.sh 1 traces 0.001 &
 logger=$!
 
-sleep 0.5
+sleep 0.3
 
-test_apps/loop.sh 1 &
-echo "$(date +%s%N);start loop;green" >> traces/events
+taskset -c 1 test_apps/loop > traces/events &
+# echo "$(now);start loop;green" >> traces/events
 looper=$!
 
-sleep 0.5
-kill -9 $looper
-echo "$(date +%s%N);kill loop;red" >> traces/events
+sleep 0.2
+kill -INT $looper
+# echo "$(now);kill loop;red" >> traces/events
 
-sleep 0.5
-kill -9 $logger
+sleep 0.3
+kill -USR1 $logger
 wait

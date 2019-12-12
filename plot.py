@@ -23,28 +23,32 @@ dropIndex = df[df["frequency"] < min_freq].index
 df.drop(dropIndex, inplace=True)
 
 # move start time to 0
-df["time"] = df["time"].astype("datetime64[ns]")
+# df["time"] = df["time"].astype("datetime64[ns]")
 start_time = min(df['time'].values)
-df["time"] = df["time"] - start_time
+df["time"] -= start_time
 
 # convert time to seconds and frequency to MHz
-df["time"] = df["time"] / np.timedelta64(1, "s")
+# df["time"] /= np.timedelta64(1, "s")
+df["time"] /= 1000000000
 df["frequency"] = df["frequency"] / 1000
 
-end_time = max(df['time'])
+end_time = max(df['time'].values)
 
 # Read events file
 try:
     events = pd.read_csv(input_dir+'/events', sep=';', header=None,
                          names=['time', 'label', 'color'])
-    events['time'] = events['time'].astype("datetime64[ns]")
+    # events['time'] = events['time'].astype("datetime64[ns]")
     events['time'] -= start_time
-    events['time'] /= np.timedelta64(1, "s")
+    events['time'] /= 1000000000
+    # events['time'] /= np.timedelta64(1, "s")
 except:
     pass
 
 # Plot
-plt.plot("time", "frequency", data=df, marker='+')
+plt.figure(figsize=(15, 10))
+plt.plot("time", "frequency", data=df # , marker='+'
+)
 plt.hlines(base_freq / 1000, 0, end_time,
            label='base', colors='green', linestyles='dashed')
 plt.hlines(min_freq / 1000, 0, end_time,
@@ -54,8 +58,9 @@ plt.hlines(max_freq / 1000, 0, end_time,
 
 try:
     for e in events.itertuples(index=False):
+        print(e.time)
         plt.vlines(e.time,
-                   min_freq / 1000, max_freq / 1000,
+                   min_freq / 1000 - 100, max_freq / 1000 + 100,
                    colors=e.color,
                    label=e.label,
                    linestyles='dotted')
