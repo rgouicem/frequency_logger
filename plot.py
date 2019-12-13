@@ -16,20 +16,19 @@ with open(input_dir+'/min_freq', 'r') as fp:
     min_freq = int(fp.readlines()[0])
 
 # Read and process log (prune out of range points)
+# We drop the last record because it might be incomplete
 df = pd.read_csv(input_dir+'/log', sep=';')
-df.drop(df.index[-1], inplace=True) # drop last cause it might be incomplete
+df.drop(df.index[-1], inplace=True)
 dropIndex = df[df["frequency"] > max_freq].index
 df.drop(dropIndex, inplace=True)
 dropIndex = df[df["frequency"] < min_freq].index
 df.drop(dropIndex, inplace=True)
 
 # move start time to 0
-# df["time"] = df["time"].astype("datetime64[ns]")
 start_time = min(df['time'].values)
 df["time"] -= start_time
 
 # convert time to seconds and frequency to MHz
-# df["time"] /= np.timedelta64(1, "s")
 df["time"] /= 1000000000
 df["frequency"] = df["frequency"] / 1000
 
@@ -39,17 +38,14 @@ end_time = max(df['time'].values)
 try:
     events = pd.read_csv(input_dir+'/events', sep=';', header=None,
                          names=['time', 'label', 'color'])
-    # events['time'] = events['time'].astype("datetime64[ns]")
     events['time'] -= start_time
     events['time'] /= 1000000000
-    # events['time'] /= np.timedelta64(1, "s")
 except:
     pass
 
 # Plot
 plt.figure(figsize=(15, 10))
-plt.plot("time", "frequency", data=df # , marker='+'
-)
+plt.plot("time", "frequency", data=df)
 plt.hlines(base_freq / 1000, 0, end_time,
            label='base', colors='green', linestyles='dashed')
 plt.hlines(min_freq / 1000, 0, end_time,
