@@ -17,6 +17,7 @@ with open(input_dir+'/min_freq', 'r') as fp:
 
 # Read and process log (prune out of range points)
 df = pd.read_csv(input_dir+'/log', sep=';')
+df.drop(df.index[-1], inplace=True) # drop last cause it might be incomplete
 dropIndex = df[df["frequency"] > max_freq].index
 df.drop(dropIndex, inplace=True)
 dropIndex = df[df["frequency"] < min_freq].index
@@ -58,7 +59,6 @@ plt.hlines(max_freq / 1000, 0, end_time,
 
 try:
     for e in events.itertuples(index=False):
-        print(e.time)
         plt.vlines(e.time,
                    min_freq / 1000 - 100, max_freq / 1000 + 100,
                    colors=e.color,
