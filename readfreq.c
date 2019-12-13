@@ -50,9 +50,12 @@ int read_msr(int fd, off_t address, uint64_t *value) {
 	return 0;
 }
 
+int stop = 0;
+
 static void sig_handler(int signo)
 {
 	fprintf(stderr, "Caught signal %d. Stopping.\n", signo);
+	stop = 1;
 }
 
 int main(int argc, char **argv)
@@ -81,7 +84,7 @@ int main(int argc, char **argv)
 	}
 
 	printf("time;frequency\n");
-	while (1) {
+	while (!stop) {
 		/* Read MSRs and date */
 		d = rdtsc();
 		read_msr(fd, 0xe7, &m);
