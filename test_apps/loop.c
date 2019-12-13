@@ -5,6 +5,14 @@
 
 static int stop;
 
+static inline uint64_t rdtsc(void)
+{
+	uint64_t a, d;
+
+	asm volatile ("rdtsc" : "=a" (a), "=d" (d));
+	return (d << 32) | a;
+}
+
 static void sig_handler(int signo)
 {
 	stop = 1;
@@ -12,16 +20,13 @@ static void sig_handler(int signo)
 
 int main()
 {
-	struct timespec ts;
 	uint64_t d;
 
 	signal(SIGINT, sig_handler);
-	clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
-	d = ts.tv_sec * 1000000000 + ts.tv_nsec;
+	d = rdtsc();
 	printf("%lu;start loop;green\n", d);
 	while (!stop) {}
-	clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
-	d = ts.tv_sec * 1000000000 + ts.tv_nsec;
+	d = rdtsc();
 	printf("%lu;end loop;red\n", d);
 	return 0;
 }

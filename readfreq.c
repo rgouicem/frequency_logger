@@ -14,6 +14,16 @@
  * It should be called by freq_log.sh, or in the same way.
  */
 
+
+/* Credits got to: https://fr.wikipedia.org/wiki/RDTSC#Langages_C_ou_C++ */
+static inline uint64_t rdtsc(void)
+{
+	uint64_t a, d;
+
+	asm volatile ("rdtsc" : "=a" (a), "=d" (d));
+	return (d << 32) | a;
+}
+
 int open_msr(int cpu)
 {
 	char path[256];
@@ -50,7 +60,7 @@ int main(int argc, char **argv)
 	int cpu, fd;
 	float interval; 	/* sampling interval in s */
 	uint64_t base_khz;
-	struct timespec ts, interval_ts;
+	struct timespec interval_ts;
 	uint64_t d, m, a, dm, da, lm = 0, la = 0, freq;
 
 	/* Parse arguments */
@@ -73,7 +83,7 @@ int main(int argc, char **argv)
 	printf("time;frequency\n");
 	while (1) {
 		/* Read MSRs and date */
-		clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+		d = rdtsc();
 		read_msr(fd, 0xe7, &m);
 		read_msr(fd, 0xe8, &a);
 
@@ -89,7 +99,6 @@ int main(int argc, char **argv)
 		la = a;
 
 		/* Print it */
-		d = ts.tv_sec * 1000000000 + ts.tv_nsec;
 		printf("%lu;%lu\n", d, freq);
 
 		/* Sleep until next interval */
