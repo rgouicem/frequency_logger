@@ -1,7 +1,18 @@
+
+all: readfreq test_apps
+
 readfreq: readfreq.c
 	gcc -O3 -Wall -Wextra $< -o $@
 
-clean:
-	rm -rf readfreq *~
+test_apps:
+	make -C test_apps
 
-.PHONY: clean
+clean:
+	make -C test_apps clean
+	rm -rf *~
+
+mrproper: clean
+	make -C test_apps mrproper
+	rm -rf readfreq
+
+.PHONY: clean all mrproper test_apps
