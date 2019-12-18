@@ -7,6 +7,9 @@ import sys
 
 _, input_dir, output_file = sys.argv
 
+
+plt.rcParams.update({'font.size':'30'})
+
 # Read min, max and base freq
 with open(input_dir+'/base_freq', 'r') as fp:
     base_freq = int(fp.readlines()[0])
@@ -69,5 +72,6 @@ except:
 plt.xlabel("Time (s)")
 plt.ylabel("Frequency (MHz)")
 plt.title("Mean delta: {:2.6f}s".format(deltas.mean()))
+plt.rcParams.update({'font.size':'15'})
 plt.legend()
 plt.savefig(output_file, bbox_inches="tight")
