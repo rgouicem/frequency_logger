@@ -7,6 +7,8 @@ import sys
 
 _, input_dir, output_file = sys.argv
 
+# Frequency ratio: MHz: 1000, GHz: 1000000
+freq_ratio = 1000000
 
 plt.rcParams.update({'font.size':'30'})
 
@@ -31,9 +33,9 @@ df.drop(dropIndex, inplace=True)
 start_time = min(df['time'].values)
 df["time"] -= start_time
 
-# convert time to seconds and frequency to MHz
+# convert time to seconds and frequency to GHz
 df["time"] /= 1000000000
-df["frequency"] = df["frequency"] / 1000
+df["frequency"] = df["frequency"] / freq_ratio
 
 end_time = max(df['time'].values)
 
@@ -52,17 +54,17 @@ except:
 # Plot
 plt.figure(figsize=(15, 10))
 plt.plot("time", "frequency", data=df, marker='+')
-plt.hlines(base_freq / 1000, 0, end_time,
+plt.hlines(base_freq / freq_ratio, 0, end_time,
            label='base', colors='green', linestyles='dashed')
-plt.hlines(min_freq / 1000, 0, end_time,
+plt.hlines(min_freq / freq_ratio, 0, end_time,
            label='min', colors='black',  linestyles='dashed')
-plt.hlines(max_freq / 1000, 0, end_time,
+plt.hlines(max_freq / freq_ratio, 0, end_time,
            label='max', colors='red', linestyles='dashed')
 
 try:
     for e in events.itertuples(index=False):
         plt.vlines(e.time,
-                   min_freq / 1000 - 100, max_freq / 1000 + 100,
+                   min_freq / freq_ratio, max_freq / freq_ratio,
                    colors=e.color,
                    label=e.label,
                    linestyles='dotted')
@@ -70,7 +72,7 @@ except:
     pass
 
 plt.xlabel("Time (s)")
-plt.ylabel("Frequency (MHz)")
+plt.ylabel("Frequency (GHz)")
 plt.title("Mean delta: {:2.6f}s".format(deltas.mean()))
 plt.rcParams.update({'font.size':'15'})
 plt.legend()
