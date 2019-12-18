@@ -34,6 +34,9 @@ df["frequency"] = df["frequency"] / 1000
 
 end_time = max(df['time'].values)
 
+# Compute stats on deltas between samples
+deltas = df["time"].values[1:] - df["time"].values[:-1]
+
 # Read events file
 try:
     events = pd.read_csv(input_dir+'/events', sep=';', header=None,
@@ -65,5 +68,6 @@ except:
 
 plt.xlabel("Time (s)")
 plt.ylabel("Frequency (MHz)")
+plt.title("Mean delta: {:2.6f}s".format(deltas.mean()))
 plt.legend()
 plt.savefig(output_file, bbox_inches="tight")
