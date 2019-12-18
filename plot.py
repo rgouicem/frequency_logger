@@ -45,7 +45,7 @@ except:
 
 # Plot
 plt.figure(figsize=(15, 10))
-plt.plot("time", "frequency", data=df)
+plt.plot("time", "frequency", data=df, marker='+')
 plt.hlines(base_freq / 1000, 0, end_time,
            label='base', colors='green', linestyles='dashed')
 plt.hlines(min_freq / 1000, 0, end_time,
