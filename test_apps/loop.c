@@ -20,12 +20,16 @@ static void sig_handler(int signo)
 
 int main()
 {
-	uint64_t d;
+	uint64_t d, start;
 
 	signal(SIGINT, sig_handler);
-	d = rdtsc();
-	printf("%lu;start loop;green\n", d);
-	while (!stop) {}
+	start = rdtsc();
+	printf("%lu;start loop;green\n", start);
+	while (!stop) {
+		d = rdtsc();
+		if (d - start > 200000000)
+			break;
+	}
 	d = rdtsc();
 	printf("%lu;end loop;red\n", d);
 	return 0;

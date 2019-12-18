@@ -14,13 +14,7 @@ logger=$!
 
 sleep 0.2
 
-taskset -c 1 test_apps/loop > traces/events &
-# echo "$(now);start loop;green" >> traces/events
-looper=$!
-
-sleep 0.2
-kill -INT $looper
-# echo "$(now);kill loop;red" >> traces/events
+taskset -c 1 test_apps/loop > traces/events
 
 sleep 0.2
 kill -USR1 $logger
