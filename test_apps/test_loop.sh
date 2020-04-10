@@ -2,8 +2,15 @@
 
 [ $EUID -ne 0 ] && { echo "Must be root."; exit 1; }
 
-# Default duration of 200 ms
-: ${DURATION:=200000000}
+# Duration of idleness before busy loop in s (default: 200 ms)
+: ${BEFORE:=0.2}
+# Duration of busy loop in s (default: 200 ms)
+: ${DURATION:=0.2}
+# Duration of idleness after busy loop in s (default: 200 ms)
+: ${AFTER:=0.2}
+
+# Convert duration to ns for loop program
+DURATION=$(echo "$DURATION * 1000000000 / 1" | bc)
 
 # Pin this script (and its children) to cpu0
 taskset -cp 0 $$ &> /dev/null
@@ -12,12 +19,12 @@ taskset -cp 0 $$ &> /dev/null
 taskset -c 0 ./log_freq.sh 1 traces 0.001 &
 logger=$!
 
-sleep 0.2
+sleep $BEFORE
 
 # Launch a busy loop for DURATION ns
 taskset -c 1 test_apps/loop $DURATION > traces/events
 
-# Kill logger 200 ms after busy loop ended
-sleep 0.2
+# Kill logger AFTER seconds after busy loop ended
+sleep $AFTER
 kill -USR1 $logger
 wait
