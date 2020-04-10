@@ -4,8 +4,6 @@
 #include <time.h>
 #include <stdint.h>
 
-#define DEF_DURATION_NS 200000000 	/* 200 ms */
-
 static int stop;
 
 static inline uint64_t rdtsc(void)
@@ -23,7 +21,7 @@ static void sig_handler(int signo)
 
 int main(int argc, char **argv)
 {
-	uint64_t d, start, duration = DEF_DURATION_NS;
+	uint64_t d, start, duration = 0;
 
 	if (argc > 1)
 		duration = strtoul(argv[1], NULL, 10);
@@ -34,6 +32,8 @@ int main(int argc, char **argv)
 
 	while (!stop) {
 		d = rdtsc();
+		if (!duration)
+			continue;
 		if (d - start > duration)
 			break;
 	}
