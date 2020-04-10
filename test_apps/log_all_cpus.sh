@@ -15,7 +15,7 @@ done
 
 sleep 1
 
-taskset -c 1 test_apps/loop.sh 1 &
+taskset -c 1 test_apps/loop 1 &
 looper=$!
 
 sleep 1
