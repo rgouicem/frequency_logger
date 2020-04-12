@@ -18,8 +18,24 @@ interval=0.1
 mkdir -p $output_dir
 
 # Get base freq and other freqs
-base_khz=$(echo "$(sed -nE '/model name/s/(.+) ([0-9.]+)GHz/\2/p' /proc/cpuinfo | head -n1) * 1000000" | bc)
-base_khz=${base_khz%.*}
+vendor=$(sed -nE '/vendor_id/s/.+: (.+)$/\1/p' /proc/cpuinfo | head -n1)
+if [ "$vendor" == "GenuineIntel" ] ; then
+    base_khz=$(echo "$(sed -nE '/model name/s/(.+) ([0-9.]+)GHz/\2/p' /proc/cpuinfo | head -n1) * 1000000" | bc)
+    base_khz=${base_khz%.*}
+elif [ "$vendor" == "AuthenticAMD" ] ; then
+    # The base frequency should bo read from MSR registers as explained
+    # in AMD's Processor Programming Reference:
+    # https://developer.amd.com/wp-content/resources/55570-B1_PUB.zip
+    # But I'm way too tired to do it properly, so just use the max
+    # frequency from sysfs since it is the same on my test CPU.
+    # This also means that max frequency does not take Boost into account...
+    # Don't know how to get this boosted value, thanks AMD...
+    base_khz=$(cat /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq)
+else
+    echo "Vendor $vendor not supported. Aborting."
+    rm -rf $output_dir
+    exit 251
+fi
 echo $base_khz > ${output_dir}/base_freq
 cp /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq ${output_dir}/min_freq
 cp /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq ${output_dir}/max_freq
