@@ -20,14 +20,10 @@ with open(input_dir+'/max_freq', 'r') as fp:
 with open(input_dir+'/min_freq', 'r') as fp:
     min_freq = int(fp.readlines()[0])
 
-# Read and process log (prune out of range points)
+# Read log
 # We drop the last record because it might be incomplete
 df = pd.read_csv(input_dir+'/log', sep=';')
 df.drop(df.index[-1], inplace=True)
-dropIndex = df[df["frequency"] > max_freq].index
-df.drop(dropIndex, inplace=True)
-dropIndex = df[df["frequency"] < min_freq].index
-df.drop(dropIndex, inplace=True)
 
 # move start time to 0
 start_time = min(df['time'].values)
