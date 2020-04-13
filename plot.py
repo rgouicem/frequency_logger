@@ -21,8 +21,10 @@ with open(input_dir+'/min_freq', 'r') as fp:
     min_freq = int(fp.readlines()[0])
 
 # Read log
+# We drop the first record because it will be 0 GHz
 # We drop the last record because it might be incomplete
 df = pd.read_csv(input_dir+'/log', sep=';')
+df.drop(df.index[0], inplace=True)
 df.drop(df.index[-1], inplace=True)
 
 # move start time to 0
