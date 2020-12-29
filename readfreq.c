@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	printf("time;frequency\n");
+	printf("tsc;frequency\n");
 	while (!stop) {
 		/* Read MSRs and date */
 		d = rdtsc();

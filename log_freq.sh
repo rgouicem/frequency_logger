@@ -12,6 +12,15 @@ output_dir=$2
 
 lsmod | grep -q -E '^msr ' || modprobe msr || { echo "You need the msr kernel module for this tool to work"; exit 253; }
 
+# Check if tsc_khz is available and warn if not
+if [ -f /sys/devices/system/cpu/tsc_khz ] ; then
+    tsc_khz=$(cat /sys/devices/system/cpu/tsc_khz)
+else
+    echo "[WARN} You don't have tsc_khz exported. The base_freq will be used instead."
+    echo "Build and insert the tsc_khz module (in this repo's tsc_khz submodule) to remove this warning."
+    tsc_khz=0
+fi
+
 interval=0.1
 [ -z $3 ] || interval=$3
 
@@ -37,6 +46,7 @@ else
     exit 251
 fi
 echo $base_khz > ${output_dir}/base_freq
+echo $tsc_khz > ${output_dir}/tsc_khz
 cp /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq ${output_dir}/min_freq
 cp /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq ${output_dir}/max_freq
 cp /sys/devices/system/cpu/cpufreq/policy0/scaling_governor ${output_dir}/
@@ -45,4 +55,4 @@ cp /sys/devices/system/cpu/cpufreq/policy0/scaling_governor ${output_dir}/
 trap 'echo Killing readfreq...; kill -INT $!' SIGUSR1
 ./readfreq $1 $interval $base_khz > ${output_dir}/log &
 wait
-echo Terminating
+echo "Terminating"
