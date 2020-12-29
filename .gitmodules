@@ -1,0 +1,3 @@
+[submodule "tsc_khz"]
+	path = tsc_khz
+	url = https://github.com/rgouicem/tsc_khz
